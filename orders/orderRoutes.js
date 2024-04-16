@@ -46,4 +46,19 @@ router.post('/placeOrder',async(req,res)=>{
         res.json({error}).status(403)
     }
 })
+router.get('/myOrders',async(req,res)=>{
+    const {email}=req.headers;
+    try {
+        const ordersmail = await placedOrder.find({ email: email });
+        const productsData = [];
+        for (let i = 0; i < ordersmail.length; i++) {
+            const myordersData = await products.find({ _id: ordersmail[i]._id });
+            productsData.push(...myordersData);
+        }
+        res.status(200).json({ products: productsData });
+    } catch (error) {
+        res.status(404).json({ message: 'failed', error });
+    }
+    
+})
 module.exports=router;
